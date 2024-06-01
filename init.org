@@ -208,6 +208,19 @@ TODO: Have support for C language
 
 #+end_src
 
+** Export
+*** Setup default browser
+#+begin_src emacs-lisp
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "firefox")
+#+end_src
+
+*** Install twitter bootstarp
+#+begin_src emacs-lisp
+  (use-package ox-twbs
+    :ensure t)
+#+end_src
+
 * Development
 ** Basic
 #+begin_src emacs-lisp
