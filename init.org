@@ -133,6 +133,11 @@ TODO: fix logos on mode line
     :ensure-system-package libtool-bin)
  #+end_src
 
+*** Install magit for better git experience
+    #+begin_src emacs-lisp
+      (use-package magit
+	:ensure t)
+    #+end_src
 * Org mode
 ** Basic
 - TODO : Wrap after 100 columns
