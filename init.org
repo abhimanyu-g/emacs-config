@@ -114,7 +114,23 @@ TODO: fix logos on mode line
     :ensure t)
  #+end_src
 
+*** Improving teminal inside emacs
+#+begin_src emacs-lisp
+  ;; Avoid erasing prompts on backspace in shell
+  (setq comint-prompt-read-only t)
 
+
+  ;; Do not overwrite prompts on terminal
+  (overwrite-mode 0)
+
+
+  ;; Use vterm as shell
+  (use-package use-package-ensure-system-package
+    :ensure t)
+
+  (use-package vterm
+    :ensure t
+    :ensure-system-package libtool-bin)
  #+end_src
 
 * Org mode
