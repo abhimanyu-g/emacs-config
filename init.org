@@ -72,46 +72,48 @@ TODO: fix logos on mode line
 ** Improvement
 #+begin_src emacs-lisp
 
-    ;; Enhance minibuffer;;
-    ;; better interactive search in minibuffer
-    (use-package ivy
-      :ensure t
-      :init (ivy-mode 1)
-      :config
-      (setq ivy-use-virtual-buffers t)
-      (setq enable-recursive-minibuffers t))
+  ;; Enhance minibuffer;;
+  ;; better interactive search in minibuffer
+  (use-package ivy
+    :ensure t
+    :init (ivy-mode 1)
+    :config
+    (setq ivy-use-virtual-buffers t)
+    (setq enable-recursive-minibuffers t))
 
-    ;; Get summary descriptions with M-x
-    (use-package ivy-rich
-      :ensure t
-      :init (ivy-rich-mode 1))
+  ;; Get summary descriptions with M-x
+  (use-package ivy-rich
+    :ensure t
+    :init (ivy-rich-mode 1))
 
-    ;; Substitute common elisp functions with ivy based alternatives
-    (use-package counsel
-      :ensure t
-      :init (counsel-mode 1))
+  ;; Substitute common elisp functions with ivy based alternatives
+  (use-package counsel
+    :ensure t
+    :init (counsel-mode 1))
 
-    ;; Improve indentation
-    (use-package aggressive-indent
-      :ensure t
-      :init (global-aggressive-indent-mode 1))
+  ;; Improve indentation
+  (use-package aggressive-indent
+    :ensure t
+    :init (global-aggressive-indent-mode 1))
 
-    (electric-pair-mode 1);; Auto pair brackets
+  (electric-pair-mode 1);; Auto pair brackets
 
-    ;; On the fly spell check
-    (use-package flycheck
-      :ensure t
-      :init (global-flycheck-mode 1))
+  ;; On the fly spell check
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode 1))
 
-    ;; Improve incremental display of shorcut keys
-    ;; Note: Might have to run 'M-x package-refresh-contents'
-    (use-package which-key
-      :ensure t
-      :init (which-key-mode 1))
+  ;; Improve incremental display of shorcut keys
+  ;; Note: Might have to run 'M-x package-refresh-contents'
+  (use-package which-key
+    :ensure t
+    :init (which-key-mode 1))
 
-    ;; Replace multiple instance simultaneously
-    (use-package iedit
-      :ensure t)
+  ;; Replace multiple instance simultaneously
+  (use-package iedit
+    :ensure t)
+ #+end_src
+
 
  #+end_src
 
