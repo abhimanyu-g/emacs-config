@@ -238,9 +238,9 @@ TODO: fix logos on mode line
     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
     (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
     (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
-
 
   ;;Basic UI stuff
   (use-package org
@@ -248,15 +248,19 @@ TODO: fix logos on mode line
     (org-mode . my-org-mode-setup)
     (org-mode . flyspell-mode)
     :config
+    ;; hide the emphasis markup (e.g. /.../ for italics, *...* for bold, etc.)
+    (setq org-hide-emphasis-markers t)
+
+    ;; replace '...' with down arrow
     (setq org-ellipsis " ▾")
+
+    ;; at each level, indent appropriately
+    (setq org-indent-indentation-per-level 2)
     (my-org-font-setup))
-
-  ;; hide the emphasis markup (e.g. /.../ for italics, *...* for bold, etc.)
-  (setq org-hide-emphasis-markers t)
-
 #+end_src
 
-- Beautify Bullets for headings in org-mode
+**** org-bullets
+Beautify Bullets for headings in org-mode
 #+begin_src emacs-lisp
 
 ;; Improve the bullets styling with utf-8 encoding
