@@ -385,6 +385,29 @@ TODO: Have support for C language
     #+begin_src emacs-lisp
     (setq org-babel-python-command "python3")
     #+end_src
+
+** Advanced configurations
+**** Org-roam
+Org roam is by /org-research/ which helps in developing a knowledge management system based off of [[https://zettelkasten.de/overview/][zettelkasten system]]
+/System crafters/ has created a neat document to work with org-roam [[https://systemcrafters.net/build-a-second-brain-in-emacs/getting-started-with-org-roam/][here]]
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory "~/.local/usr/org-roam/")
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
+    :config
+    (org-roam-db-autosync-mode))
+#+end_src
+
+TODO : Install [[https://github.com/org-roam/org-roam-ui][org-roam-ui]] for beautiful rendering of the knowledge map
+
 ** Export
 **** Setup default browser
 #+begin_src emacs-lisp
