@@ -1,7 +1,38 @@
 #+TITLE Emacs configurations
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.config/emacs/init.el
 
+* Pre-requisite
+Before getting ahead with the emacs configuration, ensure, you have installed these packages on your appropriate operating system
+- ~fonts-firacode~  -> This is the default font we will be using
+- ~libtool-bin~ -> Required for vterm to run
+** Linux installation
+*** Debian installation (ubuntu)
+#+begin_src shell
+  sudo apt-get install -y fonts-firacode libtool-bin
+#+end_src
+*** Adding the fonts
+We need nerd-icon fonts to be able to use icons in  the modeline. However, they are not installed by default. Install them as below
+#+begin_src shell
+
+# run only if the directory does not exist
+  mkdir ~/.local/share/fonts && cd ~/.local/share/fonts
+#+end_src
+
+Download the following fonts (github->file->download)
+- [[https://github.com/ryanoasis/nerd-fonts/blob/384b1825ea0037b0314f7f9c660a80c1ecdb219a/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFont-Regular.ttf][SymbolsNerdFont-Regular.ttf]]
+- [[https://github.com/ryanoasis/nerd-fonts/blob/384b1825ea0037b0314f7f9c660a80c1ecdb219a/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf][SymbolsNerdFontMono-Regular.ttf]]
+- [[https://fonts.google.com/specimen/Cantarell][Cantarell.ttf]] -> Used in org-mode
+
+Note that, sometimes the system might not be configured to pick up a font path from ~~/.local/share/fonts~ . Add it in the ~/etc/conf/fonts.conf~ like so
+#+begin_src shell
+....
+  <fontconfig>
+  <dir>~/.local/share/fonts</dir>
+  </fontconfig>
+.....
+#+end_src
 * General
+
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)
   (setq inhibit-splash-screen t)
@@ -10,6 +41,12 @@
   (scroll-bar-mode -1)     ;Disable visible scrollbar
   (tool-bar-mode -1)       ;Disable toolbar
   (menu-bar-mode -1)       ;Disable menubar
+
+  ;; Setup encoding scheme
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-language-environment 'utf-8)
+  (set-selection-coding-system 'utf-8)
 
   ;; Whitespace config
   (global-set-key (kbd "<f4>") 'whitespace-mode)
@@ -23,18 +60,6 @@
   ;; Open in full screen by default
   (set-frame-parameter nil 'fullscreen 'maximized)
 
-  ;; Automatically tangle our Emacs.org config file when we save it
-  (defun custom/org-babel-tangle-config ()
-    (when (string-equal (buffer-file-name)
-			(expand-file-name "~/.config/emacs/init.org"))
-
-      ;; Dynamic scoping to the rescue
-      (let ((org-confirm-babel-evaluate nil))
-	(org-babel-tangle))))
-
-  (add-hook 'org-mode-hook
-	    (lambda ()
-	      (add-hook 'after-save-hook #'custom/org-babel-tangle-config)))
 
   ;; Use Melpa as a package manager
   (require 'package)
@@ -43,10 +68,39 @@
   ;;  (package-refresh-contents)
 
   (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+  ;; Update keyring to access elpa packages
+  (use-package gnu-elpa-keyring-update
+   :ensure t)
+
 #+end_src
 
+- Set fallback font-faces
+#+begin_src emacs-lisp
+  ;; Default and fixed pitch face props should be same
+  (dolist (face '(default fixed-pitch))
+    (set-face-attribute `,face nil :font "Fira Code Retina" :height 120))
+
+  ;; Set the variable pitch face
+  (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
+#+end_src
+** Session Management
+Here we use an inbuilt package called 'desktop.el'
+#+begin_src emacs-lisp
+  (desktop-save-mode 1)
+
+  ;; Load the locked desktop file without asking the user incase of Emacs crash
+  (setq desktop-load-locked-desktop t)
+
+  ;; Do not load the frame configuration
+  (setq desktop-restore-frames nil)
+
+  ;; Lazy load other files when Emacs is idle to improve Emacs startup-time
+  (setq desktop-restore-eager 8)
+
+#+end_src
 ** Theme
 TODO: fix logos on mode line
 #+begin_src emacs-lisp
@@ -64,12 +118,12 @@ TODO: fix logos on mode line
     :config
     (use-package nerd-icons
       :ensure t)
-    (setq doom-modeline-icon nil))
-
+    (setq doom-modeline-icon t))
 
 #+end_src
 
 ** Improvement
+
 #+begin_src emacs-lisp
 
   ;; Enhance minibuffer;;
@@ -101,7 +155,7 @@ TODO: fix logos on mode line
   ;; On the fly spell check
   (use-package flycheck
     :ensure t
-    :init (global-flycheck-mode 1))
+    :hook (after-init . global-flycheck-mode))
 
   ;; Improve incremental display of shorcut keys
   ;; Note: Might have to run 'M-x package-refresh-contents'
@@ -112,6 +166,12 @@ TODO: fix logos on mode line
   ;; Replace multiple instance simultaneously
   (use-package iedit
     :ensure t)
+
+  ;; Colorize matching brackets
+  (use-package rainbow-delimiters
+    :hook
+    (org-src-mode . rainbow-delimiters-mode)
+    (prog-mode . rainbow-delimiters-mode))
  #+end_src
 
 *** Improving teminal inside emacs
@@ -125,61 +185,120 @@ TODO: fix logos on mode line
 
 
   ;; Use vterm as shell
-  (use-package use-package-ensure-system-package
-    :ensure t)
+;;  (use-package use-package-ensure-system-package
+;;    :ensure t)
 
-  (use-package vterm
-    :ensure t
-    :ensure-system-package libtool-bin)
+;;  (use-package vterm
+;;    :ensure t
+;;    :ensure-system-package libtool-bin)
  #+end_src
 
 *** Install magit for better git experience
     #+begin_src emacs-lisp
       (use-package magit
-	:ensure t)
+        :ensure t)
     #+end_src
 * Org mode
 ** Basic
-- TODO : Wrap after 100 columns
+- Some of these configurations are taken from the following sources
+ 1. https://zzamboni.org/post/beautifying-org-mode-in-emacs/
+ 2. https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
+
 #+begin_src emacs-lisp
-    ; Basic UI stuff
-    (use-package org
-      :config
-      (org-indent-mode 1)
-      (variable-pitch-mode 1)
-      (auto-fill-mode 0))
+  (defun my-org-mode-setup ()
+    (org-indent-mode 1)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
 
-    ; Improve the bullets styling with utf-8 encoding
-    (use-package org-bullets
-      :ensure t
-      :after org
-      :hook (org-mode . org-bullets-mode)
-      :custom
-      (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+  ;; Set faces for heading levels
+  (defun my-org-font-setup()
+    ;; Replace list hyphen with dot
+    (font-lock-add-keywords
+     'org-mode
+     '(("^ *\\([-]\\) "
+        (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-    ; Improve font face for each level
-    (dolist (face '((org-level-1 . 1.4)
-		  (org-level-2 . 1.3)
-		  (org-level-3 . 1.2)
-		  (org-level-4 . 1.1)
-		  (org-level-5 . 1.1)
-		  (org-level-6 . 1.1)
-		  (org-level-7 . 1.1)
-		  (org-level-8 . 1.1)))
-      (set-face-attribute (car face) nil :weight 'semi-bold :height (cdr face)))
+    (dolist (face '((org-level-1 . 1.2)
+                    (org-level-2 . 1.1)
+                    (org-level-3 . 1.05)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.1)))
+      (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
 
-    ; Center things in org mode
-    (defun custom/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-	  visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+    (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
 
-  (use-package visual-fill-column
-    :ensure t
-    :hook (org-mode . custom/org-mode-visual-fill))
+
+  ;;Basic UI stuff
+  (use-package org
+    :hook
+    (org-mode . my-org-mode-setup)
+    (org-mode . flyspell-mode)
+    :config
+    (setq org-ellipsis " ▾")
+    (my-org-font-setup))
+
+  ;; hide the emphasis markup (e.g. /.../ for italics, *...* for bold, etc.)
+  (setq org-hide-emphasis-markers t)
 
 #+end_src
 
+- Beautify Bullets for headings in org-mode
+#+begin_src emacs-lisp
+
+;; Improve the bullets styling with utf-8 encoding
+  (use-package org-bullets
+    :ensure t
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+#+end_src
+
+- Using [[https://github.com/joostkremers/visual-fill-column][visual-fill]] package, we make emacs centered and wrap around appropriate columns
+#+begin_src emacs-lisp
+
+  (defun my-org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t
+          visual-fill-column-enable-sensible-window-split t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :after org
+    :hook (org-mode . my-org-mode-visual-fill))
+#+end_src
+
+- Tangle this org-file into a elisp file for emacs config
+#+begin_src emacs-lisp
+  ;; Automatically tangle our Emacs.org config file when we save it
+  (defun my-org-babel-tangle-config ()
+    (when (string-equal (buffer-file-name)
+			(expand-file-name "~/.config/emacs/init.org"))
+
+      ;; Dynamic scoping to the rescue
+      (let ((org-confirm-babel-evaluate nil))
+	(org-babel-tangle))))
+
+  (add-hook 'org-mode-hook
+	    (lambda ()
+	      (add-hook 'after-save-hook #'my-org-babel-tangle-config)))
+
+#+end_src
 ** Babel
 TODO: Have support for C language
 
@@ -190,6 +309,7 @@ TODO: Have support for C language
     'org-babel-load-languages
     '((emacs-lisp . t)
       (python . t)
+      (plantuml . t)
       (C . t)
       (shell . t)
       (js . t)))
@@ -202,12 +322,54 @@ TODO: Have support for C language
 
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("pl" . "src plantuml"))
   ;;(add-to-list 'org-structure-template-alist '("c-cpp" . "src C"))
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
   (add-to-list 'org-structure-template-alist '("js" . "src js"))
 
 #+end_src
+- Avoid linewrap inside code blocks
+#+begin_src emacs-lisp
+  ;; Disable line wrapping in Org Babel source blocks
+  (defun my-org-src-mode-hook ()
+    "Disable line wrapping in org-mode source blocks."
+    (setq truncate-lines t))  ;; Prevent line wrapping
 
+  (add-hook 'org-src-mode-hook 'my-org-src-mode-hook)
+#+end_src
+*** Plant uml configs
+#+begin_src elisp
+
+ ;; plantuml package for uml diagrams
+ (use-package plantuml-mode
+ :ensure t)
+
+ ;; graphviz in assosiation with plantuml to draw graphics
+ (use-package graphviz-dot-mode
+ :ensure t)
+
+ ;; Auto open all .plantuml .puml files in plantuml-mode
+ (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+ (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
+
+ ;; Set up the file format for generated images
+ (setq org-plantuml-output-format "png")
+ (setq org-plantuml-output-file-ext "png")
+
+ ;; Use Graphviz as the rendering engine for PlantUML diagrams
+ (setq org-plantuml-exec-mode 'plantuml)
+ (setq org-plantuml-executable-path "/usr/bin/dot")
+
+ ;; Backend java runtime engine to process uml
+ (setq org-plantuml-jar-path (expand-file-name "/usr/bin/plantuml.jar"))
+
+
+#+end_src
+
+*** Python changes
+    #+begin_src emacs-lisp
+    (setq org-babel-python-command "python3")
+    #+end_src
 ** Export
 *** Setup default browser
 #+begin_src emacs-lisp
