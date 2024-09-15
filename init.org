@@ -282,7 +282,8 @@ Beautify Bullets for headings in org-mode
 
 #+end_src
 
-- Using [[https://github.com/joostkremers/visual-fill-column][visual-fill]] package, we make emacs centered and wrap around appropriate columns
+**** visual-fill
+Using [[https://github.com/joostkremers/visual-fill-column][visual-fill]] package, we make emacs centered and wrap around appropriate columns
 #+begin_src emacs-lisp
 
   (defun my-org-mode-visual-fill ()
@@ -296,7 +297,8 @@ Beautify Bullets for headings in org-mode
     :hook (org-mode . my-org-mode-visual-fill))
 #+end_src
 
-- Tangle this org-file into a elisp file for emacs config
+**** Generate init.el
+Tangle this org-file into a elisp file for emacs config
 #+begin_src emacs-lisp
   ;; Automatically tangle our Emacs.org config file when we save it
   (defun my-org-babel-tangle-config ()
@@ -314,7 +316,6 @@ Beautify Bullets for headings in org-mode
 #+end_src
 ** Babel
 TODO: Have support for C language
-
 #+begin_src emacs-lisp
 
   ;; suported languages
@@ -350,7 +351,7 @@ TODO: Have support for C language
 
   (add-hook 'org-src-mode-hook 'my-org-src-mode-hook)
 #+end_src
-*** Plant uml configs
+**** Plant uml configs
 #+begin_src elisp
 
  ;; plantuml package for uml diagrams
@@ -379,18 +380,18 @@ TODO: Have support for C language
 
 #+end_src
 
-*** Python changes
+**** Python changes
     #+begin_src emacs-lisp
     (setq org-babel-python-command "python3")
     #+end_src
 ** Export
-*** Setup default browser
+**** Setup default browser
 #+begin_src emacs-lisp
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "firefox")
 #+end_src
 
-*** Install twitter bootstarp
+**** Install twitter bootstrap
 #+begin_src emacs-lisp
   (use-package ox-twbs
     :ensure t)
