@@ -1,0 +1,10 @@
+.emacs.desktop*
+.lsp-session-v1
+.org-id-locations
+.session
+auto-save-list/
+elpa/
+init.el
+recentf
+tramp
+transient/
