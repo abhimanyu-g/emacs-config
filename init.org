@@ -408,6 +408,14 @@ Org roam is by /org-research/ which helps in developing a knowledge management s
 
 TODO : Install [[https://github.com/org-roam/org-roam-ui][org-roam-ui]] for beautiful rendering of the knowledge map
 
+**** Org-reveal
+Org-reveal allows us to generate presentation ready document from our org-files. There are bunch of configurations to tame the package that's found [[https://github.com/yjwen/org-reveal?tab=readme-ov-file#set-the-location-of-revealjs][here]]
+#+begin_src emacs-lisp
+  (use-package ox-reveal
+    :ensure t
+    :config
+    (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
+#+end_src
 ** Export
 **** Setup default browser
 #+begin_src emacs-lisp
