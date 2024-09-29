@@ -306,9 +306,11 @@ TODO: fix logos on mode line
 
   ;;Basic UI stuff
   (use-package org
+    :ensure t
     :hook
     (org-mode . my-org-mode-setup)
     (org-mode . flyspell-mode)
+    (org-mode . my-org-font-setup)
     :config
     ;; hide the emphasis markup (e.g. /.../ for italics, *...* for bold, etc.)
     (setq org-hide-emphasis-markers t)
@@ -317,8 +319,7 @@ TODO: fix logos on mode line
     (setq org-ellipsis " ▾")
 
     ;; at each level, indent appropriately
-    (setq org-indent-indentation-per-level 2)
-    (my-org-font-setup))
+    (setq org-indent-indentation-per-level 2))
 #+end_src
 
 **** org-bullets
@@ -513,36 +514,52 @@ Org-reveal allows us to generate presentation ready document from our org-files.
 
 ** UI Improvement
 #+begin_src emacs-lisp
-    ;; Completion suggestions
-    (use-package company
-      :after lsp-mode
-      :hook (prog-mode . company-mode)
-      :bind (:map company-active-map
-	     ("<tab>" . company-complete-selection))
-	    (:map lsp-mode-map
-	     ("<tab>" . company-indent-or-complete-common))
-      :custom
-      (company-minimum-prefix-length 1)
-      (company-idle-delay 0.0))
+  ;; Completion suggestions
+  (use-package company
+    :after lsp-mode
+    :hook (prog-mode . company-mode)
+    :bind (:map company-active-map
+                ("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
 
 
-    ;; Improve ivy integration to lsp
-    (use-package lsp-ivy
-      :ensure t
-      :commands lsp-ivy-workspace-symbol)
+  ;; Improve ivy integration to lsp
+  (use-package lsp-ivy
+    :ensure t
+    :commands lsp-ivy-workspace-symbol)
 
-    ;; Improve real time documentation
+  ;; Improve real time documentation
   (use-package lsp-ui
     :ensure t
     :hook (lsp-mode . lsp-ui-mode)
     :config
-      (setq lsp-ui-doc-position 'bottom)
-      (setq lsp-ui-sideline-enable nil)
-      (setq lsp-ui-sideline-show-hover nil))
+    (setq lsp-ui-doc-position 'bottom)
+    (setq lsp-ui-sideline-enable nil)
+    (setq lsp-ui-sideline-show-hover nil))
 
+  ;; Install treemacs
+  (use-package lsp-treemacs
+    :ensure t)
+
+  ;; Add language based snippets (if supported)
+  (use-package yasnippet
+    :ensure t
+    :hook (prog-mode . yas-minor-mode)
+    :config
+    (yas-reload-all))
+
+  ;; Get bunch of officially supported snippets
+  (use-package yasnippet-snippets
+    :ensure t
+    :after yasnippet)
 #+end_src
 
 ** Language Specific
+*** C
 #+begin_src emacs-lisp
   (use-package c-mode
     :hook (c-mode . lsp-deferred)
