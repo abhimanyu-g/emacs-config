@@ -441,13 +441,14 @@ TODO: Have support for C language
 
 ** Advanced configurations
 **** Org-roam
-Org roam is by /org-research/ which helps in developing a knowledge management system based off of [[https://zettelkasten.de/overview/][zettelkasten system]]
-/System crafters/ has created a neat document to work with org-roam [[https://systemcrafters.net/build-a-second-brain-in-emacs/getting-started-with-org-roam/][here]]
+Org roam is by /org-research/ which helps in developing a knowledge management system based off of [[https://zettelkasten.de/overview/][zettelkasten system]] . /System crafters/ has created some commendable work on the topic which can be found [[https://systemcrafters.net/build-a-second-brain-in-emacs/][here]]
+Note that, the directory mentioned for ~org-roam-directory~ should already exists!
+
 #+begin_src emacs-lisp
   (use-package org-roam
     :ensure t
     :custom
-    (org-roam-directory "~/.local/usr/org-roam/")
+    (org-roam-directory "~/.local/usr/emacs/org-roam/")
     :bind (("C-c n l" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
            ("C-c n g" . org-roam-graph)
