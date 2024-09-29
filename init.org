@@ -35,12 +35,64 @@ Note that, sometimes the system might not be configured to pick up a font path f
 
 *** Adding utils
 **** ~Reveal.js~
+**** Reveal.js
 reveal.js utility is used to generate a presentation from the org-document. /Melpa/ provides a neat package called ~org-reveal~ which depends on ~reveal.js~ under-the-hood. Hence, as a prerequisite, download ~reveal.js~ to which we will point to later 
 
 #+begin_src shell
   mkdir ~/.config/emacs/utils && cd ~/.config/emacs/utils
   git clone https://github.com/hakimel/reveal.js.git
 #+end_src
+**** Flutter SDK
+Flutter sdk is required to develop flutter apps. The installation procedure can be found [[https://docs.flutter.dev/get-started/install][here]]
+***** Verify that you have the following tools installed: ~bash~, ~file~, ~mkdir~, ~rm~, ~which~
+#+begin_src shell
+  which bash file mkdir rm which
+#+end_src
+***** Install the following packages: ~curl~, ~git~, ~unzip~, ~xz-utils~, ~zip~, ~libglu1-mesa~
+#+begin_src shell
+  sudo apt-get update -y && sudo apt-get upgrade -y;
+  sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
+#+end_src
+***** Install flutter-sdk
+Install ~flutter-sdk~ which includes =flutter-cli= and =dart-cli= required for the Flutter app development. The procedure to do show is available [[https://docs.flutter.dev/get-started/install/linux/android#download-then-install-flutter][here]]. Place the (extracted,) downloaded binary in =~/.local/bin/flutter-sdk/= . Create the directory if unavailable
+***** For Android development in flutter
+****** Install prerequisites
+#+begin_src shell
+  sudo apt-get install \
+      libc6:amd64 libstdc++6:amd64 \
+      libbz2-1.0:amd64 libncurses5:amd64
+#+end_src
+
+***** Install Android SDK
+The procedure to install ~Android SDK~ is [[ https://developer.android.com/studio#command-line-tools-only][here]]. Note that this is only the ~Android command line tools~ and not the entire ~Android studio~.
+Place your downloaded (and unzipped) binary inside =~/.local/bin/android-sdk/= . Create the directory if unavailable.
+According to the [[https://developer.android.com/tools/sdkmanager][installation page]] of ~Android Command line tools~, we need to follow the following sequence to be able to use ~sdkmanager~ utils
+#+begin_src shell
+  cd ~/.local/bin/android-sdk
+  mkdir latest
+  cp -r /bin /lib *.txt *.properties latest
+#+end_src
+***** Update =PATH= variable
+Update =PATH= variable to make ~android-sdk~ , ~flutter-cli~ and ~dart-cli~ globally accessible
+#+begin_src shell
+  echo -e "#Update flutter and android SDK path\nexport PATH=~/.local/bin/flutter-sdk/flutter/bin:~/.local/bin/android-sdk/cmdline-tools/latest/bin:~/.local/bin/android-sdk/platform-tools\$PATH" >> ~/.bashrc
+#+end_src
+***** Configure flutter and android sdk
+After ~flutter-cli~ and ~sdkmanager~ is installed, configure to use them
+#+begin_src shell
+
+  #Setup android-sdk path inside flutter
+  flutter config --android-sdk ~/.local/bin/android-sdk
+
+  #Install all platform tools (adb, fastboot,...)
+  sdkmanager --install sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+#+end_src
+***** Check for settings
+The following command should show /check-mark/ on all checklist
+#+begin_src shell
+  flutter doctor
+#+end_src
+
 * General
 
 #+begin_src emacs-lisp
@@ -498,4 +550,24 @@ Org-reveal allows us to generate presentation ready document from our org-files.
 
   (add-hook 'c++-mode-hook #'lsp-deferred)
   (add-hook 'rust-mode-hook #'lsp-deferred)
+#+end_src
+*** Dart/Flutter
+#+begin_src emacs-lisp
+  (use-package lsp-dart
+    :ensure t
+    :config
+    (setq lsp-dart-sdk-dir "~/.local/bin/flutter-sdk/flutter/bin/cache/dart-sdk")
+    (setq lsp-dart-flutter-sdk-dir "~/.local/bin/flutter-sdk/flutter/"))
+
+  ;; Assuming usage with dart-mode
+  (use-package dart-mode
+    :hook (dart-mode . lsp-deferred))
+
+  ;; Handy package to deal with flutter
+  (use-package flutter
+    :after dart-mode
+    :bind (:map dart-mode-map
+                ("C-M-x" . #'flutter-run-or-hot-reload))
+    :custom
+    (flutter-sdk-path (concat (getenv "HOME") "/.local/bin/flutter-sdk/flutter")))
 #+end_src
