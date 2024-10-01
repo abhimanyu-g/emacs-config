@@ -4,12 +4,13 @@
 
 * Pre-requisite
 Before getting ahead with the emacs configuration, ensure, you have installed these packages on your appropriate operating system
-- ~fonts-firacode~  -> This is the default font we will be using
-- ~libtool-bin~ -> Required for vterm to run
+  - ~fonts-firacode~  -> This is the default font we will be using
+  - ~libtool-bin~ -> Required for vterm to run
+  - ~libsqlite3-dev~ -> Used by org-roam
 ** Linux installation
 *** Debian installation (ubuntu)
 #+begin_src shell
-  sudo apt-get install -y fonts-firacode libtool-bin
+  sudo apt-get install -y fonts-firacode libtool-bin libsqlite3-dev
 #+end_src
 *** Adding the fonts
 We need nerd-icon fonts to be able to use icons in  the modeline. However, they are not installed by default. Install them as below
@@ -185,7 +186,6 @@ TODO: fix logos on mode line
 #+end_src
 
 ** Improvement
-
 #+begin_src emacs-lisp
 
   ;; Enhance minibuffer;;
@@ -374,13 +374,14 @@ TODO: Have support for C language
 
   ;; suported languages
   (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t)
-      (plantuml . t)
-      (C . t)
-      (shell . t)
-      (js . t)))
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)
+     (plantuml . t)
+     (C . t)
+     (shell . t)
+     (js . t)
+     (makefile . t)))
 
   (setq org-confirm-babel-evaluate nil)
 
@@ -391,7 +392,7 @@ TODO: Have support for C language
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
   (add-to-list 'org-structure-template-alist '("pl" . "src plantuml"))
-  ;;(add-to-list 'org-structure-template-alist '("c-cpp" . "src C"))
+  (add-to-list 'org-structure-template-alist '("c-cpp" . "src C"))
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
   (add-to-list 'org-structure-template-alist '("js" . "src js"))
 
@@ -444,18 +445,19 @@ TODO: Have support for C language
 Org roam is by /org-research/ which helps in developing a knowledge management system based off of [[https://zettelkasten.de/overview/][zettelkasten system]] . /System crafters/ has created some commendable work on the topic which can be found [[https://systemcrafters.net/build-a-second-brain-in-emacs/][here]]
 Note that, the directory mentioned for ~org-roam-directory~ should already exists!
 
+~Troubleshooting~ : Initially, my org-roam did not work and complained about few function definitions being void. Update the org-roam in that case =M-x package-list-packages= and search for /org/ and /Install/ it manually
+
 #+begin_src emacs-lisp
   (use-package org-roam
     :ensure t
+    :after org
     :custom
-    (org-roam-directory "~/.local/usr/emacs/org-roam/")
+    (setq org-roam-directory (file-truename "~/.local/usr/emacs/org-roam/"))
     :bind (("C-c n l" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
            ("C-c n g" . org-roam-graph)
            ("C-c n i" . org-roam-node-insert)
-           ("C-c n c" . org-roam-capture)
-           ;; Dailies
-           ("C-c n j" . org-roam-dailies-capture-today))
+           ("C-c n c" . org-roam-capture))
     :config
     (org-roam-db-autosync-mode))
 #+end_src
