@@ -7,10 +7,11 @@ Before getting ahead with the emacs configuration, ensure, you have installed th
   - ~fonts-firacode~  -> This is the default font we will be using
   - ~libtool-bin~ -> Required for vterm to run
   - ~libsqlite3-dev~ -> Used by org-roam
+  - ~git~ -> Used by magit package
 ** Linux installation
 *** Debian installation (ubuntu)
 #+begin_src shell
-  sudo apt-get install -y fonts-firacode libtool-bin libsqlite3-dev
+  sudo apt-get install -y fonts-firacode libtool-bin libsqlite3-dev git
 #+end_src
 *** Adding the fonts
 We need nerd-icon fonts to be able to use icons in  the modeline. However, they are not installed by default. Install them as below
