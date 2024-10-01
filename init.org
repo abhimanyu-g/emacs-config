@@ -94,6 +94,11 @@ The following command should show /check-mark/ on all checklist
   flutter doctor
 #+end_src
 
+** Troubleshooting
+1.Unable to get elpa packages : This is probably due to the /gpg key/ expiry. Check out support in following [[https://stackoverflow.com/questions/58202993/emacs-failed-to-verify-signature-archive-contents-sig][stackoverflow link]]
+#+begin_src shell
+  gpg --homedir ~/<emacs config home>/elpa/gnupg --receive-keys 645357D2883A0966
+#+end_src
 * General
 
 #+begin_src emacs-lisp
