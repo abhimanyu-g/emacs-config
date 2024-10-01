@@ -36,7 +36,6 @@ Note that, sometimes the system might not be configured to pick up a font path f
 #+end_src
 
 *** Adding utils
-**** ~Reveal.js~
 **** Reveal.js
 reveal.js utility is used to generate a presentation from the org-document. /Melpa/ provides a neat package called ~org-reveal~ which depends on ~reveal.js~ under-the-hood. Hence, as a prerequisite, download ~reveal.js~ to which we will point to later 
 
